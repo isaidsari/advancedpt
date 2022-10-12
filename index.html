@@ -43,10 +43,8 @@
 
         function add97() {
             var input_val = document.querySelector("input").value;
-            var number_part = input_val.slice(2);
-            
-            var new_val = (BigInt(number_part) + 97n).toString();
-            
+            var new_val = (BigInt(input_val.slice(2)) + 97n).toString();
+            console.log("added 97 to input text");
             document.querySelector("input").value = input_val.slice(0, 2) + new_val;
         }
 
@@ -71,7 +69,6 @@
             return acc == 1;
         }
 
-        
         function checkIBAN() {
             let s = document.querySelector('input').value;
             if (verifyIBAN(s)) {
