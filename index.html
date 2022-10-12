@@ -43,26 +43,11 @@
 
         function add97() {
             var input_val = document.querySelector("input").value;
-            // only take number part
-            var x = input_val.replace(/[^0-9]/g, '');
-            var y;
-            var i;
-            for (i = 0; i < x.length; i++) {
-                if (x[i] == 9) {
-                    y = x.slice(i);
-                    break;
-                }
-            }
-            console.log(x);
-            console.log(x.slice(i));
-            y = (parseInt(x) + 97);
-            // convert y to string and add 0s
-            y = y.toString();
-            while (y.length < x.slice(i).length) {
-                y = "0" + y;
-            }
-            document.querySelector("input").value = input_val[0]+input_val[1]+ x.slice(0, i) + y;
-            //console.log(x);
+            var number_part = input_val.slice(2);
+            
+            var new_val = (BigInt(number_part) + 97n).toString();
+            
+            document.querySelector("input").value = input_val.slice(0, 2) + new_val;
         }
 
         function verifyIBAN(s) {
