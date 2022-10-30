@@ -16,15 +16,20 @@ table {
     width: 30%;
     text-align: center;
 }
-td {
+td,th{
     border-color: #d4d4d4;
     border-style: solid;
     border-width: 1px;
     padding: 10px;
     font-size: 1.5em;
-    
 }
 
 a {
     color: khaki;
+}
+
+hr {
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
 }
