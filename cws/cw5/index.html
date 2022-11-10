@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>cw5</title>
+
+    <style>
+        /* CSS comment */
+        body {
+            max-width: 440px;
+        }
+
+        #url {
+            width: 190px;
+        }
+
+        span,
+        #url {
+            color: blue;
+        }
+
+        body {
+            font-family: 'Fira Code Retina', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 id=title title="Put your name here"></h2>
+    <!-- battery percentige bar -->
+    <h3>battery status</h3>
+    <!-- progess bar -->
+    <progress id="battery_prog" max="100" value="0"></progress>
+    <span id=lev></span>
+
+    <h3 id="conn">connection status : <span id="conn_stat"></span></h3>
+
+    <h3>keyboard</h3>
+    <span id="key"></span>
+
+    <br>
+
+    <hr />
+    <b>Sample code</b>
+    <pre id=sample>This text is not shown. Why?</pre>
+    <hr />
+
+    <script>
+        "use strict";
+        function init() {
+
+            navigator.getBattery().then(function (b) {
+                b.addEventListener("levelchange", function () {
+                    battery_prog.value = b.level * 100;
+                    lev.innerText = `${(b.level * 100).toFixed(0)}%`;
+                });
+                b.addEventListener("onchargingchange", function () {
+                    if (b.charging) {
+                        lev.innerText = `⚡charging   ${(b.level * 100).toFixed(0)}%`;
+                    } else {
+                        lev.innerText = `discharging ${(b.level * 100).toFixed(0)}%`;
+                    }
+                });
+            });
+
+            title.innerText = document.title;
+            sample.innerText = init + '\n' + check;
+
+            window.addEventListener("online", function () {
+                conn_stat.innerText = "online";
+            });
+            window.addEventListener("offline", function () {
+                conn_stat.innerText = "offline";
+            });
+
+            window.addEventListener("keydown", function (e) {
+                key.innerText += e.key;
+            });
+
+            window.addEventListener("keyup", function (e) {
+                key.innerText = key.innerText.replace(e.key, "");
+            });
+
+            check()
+        }
+        function check() {
+            if (navigator.onLine)
+                conn_stat.innerText = "online";
+            else
+                conn_stat.innerText = "offline";
+        }
+
+        init();
+    </script>
+
+</body>
+
+</html>
