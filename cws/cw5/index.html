@@ -50,48 +50,43 @@
     <script>
         "use strict";
         function init() {
+            navigator.onLine ? conn_stat.innerText = "online" : conn_stat.innerText = "offline";
 
             navigator.getBattery().then(function (b) {
+                battery_prog.value = b.level * 100;
+                lev.innerText= b.level * 100 + "%";
+                if (b.charging) 
+                    lev.innerText += " (⚡  charging)";
+                else 
+                    lev.innerText += " (discharging)";
+
                 b.addEventListener("levelchange", function () {
                     battery_prog.value = b.level * 100;
                     lev.innerText = `${(b.level * 100).toFixed(0)}%`;
                 });
                 b.addEventListener("onchargingchange", function () {
                     if (b.charging) {
-                        lev.innerText = `⚡charging   ${(b.level * 100).toFixed(0)}%`;
+                        lev.innerText = `${(b.level * 100).toFixed(0)}% (⚡  charging)`;
                     } else {
-                        lev.innerText = `discharging ${(b.level * 100).toFixed(0)}%`;
+                        lev.innerText = `${(b.level * 100).toFixed(0)}% (discharging)`;
                     }
                 });
             });
-
-            title.innerText = document.title;
-            sample.innerText = init + '\n' + check;
-
             window.addEventListener("online", function () {
                 conn_stat.innerText = "online";
             });
             window.addEventListener("offline", function () {
                 conn_stat.innerText = "offline";
             });
-
             window.addEventListener("keydown", function (e) {
                 key.innerText += e.key;
             });
-
             window.addEventListener("keyup", function (e) {
                 key.innerText = key.innerText.replace(e.key, "");
             });
-
-            check()
+            title.innerText = document.title;
+            sample.innerText = init;
         }
-        function check() {
-            if (navigator.onLine)
-                conn_stat.innerText = "online";
-            else
-                conn_stat.innerText = "offline";
-        }
-
         init();
     </script>
 
