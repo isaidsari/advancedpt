@@ -54,10 +54,10 @@
 
             navigator.getBattery().then(function (b) {
                 battery_prog.value = b.level * 100;
-                lev.innerText= b.level * 100 + "%";
-                if (b.charging) 
+                lev.innerText = b.level * 100 + "%";
+                if (b.charging)
                     lev.innerText += " (⚡  charging)";
-                else 
+                else
                     lev.innerText += " (discharging)";
 
                 b.addEventListener("levelchange", function () {
