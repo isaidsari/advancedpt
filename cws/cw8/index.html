@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>cw8</title>
+
+    <style>
+        body {
+            margin: 15px;
+            max-width: 550px;
+        }
+
+        h2 {
+            margin: 10px 0;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            margin: 0;
+            border: none;
+            cursor: crosshair;
+        }
+    </style>
+    <!-- leaflet Make sure you put JS AFTER CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <canvas id=w_canvas></canvas>
+    <hr>
+    <div id=map></div>
+
+</body>
+<script>
+    "use strict"
+    var MAP  //global
+    var accessKey
+    function askUser() {
+        let k = prompt('Please enter openweather key:')
+        if (!k) error('You need an API key')
+        return k
+    }
+    function getAPIkey() {
+        if (origin.startsWith('http') && localStorage) {
+            if (!localStorage.keys) localStorage.keys = '{}'
+            let keys = JSON.parse(localStorage.keys)
+            if (!keys.openweather) {
+                keys.openweather = askUser()
+                localStorage.keys = JSON.stringify(keys)
+            }
+            accessKey = keys.openweather
+        } else { //cannot use localStorage
+            accessKey = askUser()
+        }
+    }
+    getAPIkey()
+    function init() {
+        //initial coordinates are given: 50. Yil Parki
+        let p = { lat: 40.970021, lng: 29.057876 }
+        console.log('init at', p)
+        //L is global object from leaflet
+        MAP = L.map('map').setView(p, 10)  //setZoom(10)
+        let u = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        let attribution = '&copy; OpenStreetMap contributors'
+        L.tileLayer(u, { attribution }).addTo(MAP)
+        MAP.on('click', (e) => {
+            console.log(e.latlng)
+            getWeather(e.latlng)
+        })
+    }
+    function convert(kelvin) {
+            return (kelvin - 273.15);
+            //return celsius*1.8 + 32
+        }
+    async function getWeather(loc) {
+        let lat = loc.lat; let lon = loc.lng
+        let u = "https://api.openweathermap.org/data/2.5/weather?"
+            + "lat=" + lat + "&lon=" + lon + "&APPID=" + accessKey;
+        let r = await fetch(u)
+        let data = await r.json()
+        console.log(data)
+        //  fetch(u).then(r => r.json()).then(showWeather)
+        // }
+        // function showWeather(data) {
+        let w = data.weather[0];
+        let celsius = convert(data.main.temp).toFixed(0)
+        let hh = w.main + "  " + celsius + "°", { sys } = data
+        let yy = data.name + ', ' + sys.country
+        let wind = (3.6 * data.wind.speed).toFixed(0)
+        let pres = (0.750062 * data.main.pressure).toFixed(0)
+        const WIND = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
+        let d = (data.wind.deg / 45).toFixed(0)
+        /*detay.innerText = hh  //+'\n'+yy +'\n['+mahal.value+"]"
+            + '\nWind  ' + wind + ' km/h ' + WIND[d]
+            + '\nPressure  ' + pres + ' mm'
+            + '\nHumidity  %' + data.main.humidity
+        let { sunrise, sunset } = sys, noon = (sunrise + sunset) / 2
+        gunes.innerText = 'Rise ' + toHM(sunrise + data.timezone)
+            + '\nNoon ' + toHM(noon + data.timezone)
+            + '\nSet  ' + toHM(sunset + data.timezone)
+            + '\nZone ' + (data.timezone / 3600)
+            */
+        console.log(hh, yy, 'Wind ' + data.wind.deg + '° ' + WIND[d])
+        drawWeather(
+            (w.icon),
+            (w.main + "  " + celsius + "°"),
+            (data.name + ', ' + sys.country),
+            (w.description),
+            (wind),
+            (pres))
+    }
+    function drawWeather(wicon, wdata, wcity, wextra, wwind, wpres) {
+        let c = document.getElementById("w_canvas");
+        let ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, 500, 110);
+        let grd = ctx.createLinearGradient(20, 0, 0, 110);
+        grd.addColorStop(0, "rgba(0, 0, 255, 0.5)");
+        grd.addColorStop(1, "rgba(0, 255, 255, 0.5)");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, 500, 110);
+        ctx.textbaseline = "top";
+        ctx.fillStyle = "black";
+        ctx.font = "20px Segoe UI";
+        ctx.fillText(wdata, 50, 30);
+        let img = new Image();
+        img.src = "https://openweathermap.org/img/w/" + wicon + ".png"
+        img.onload = () => {
+            ctx.drawImage(img, 10, 10, 30, 30);
+        }
+        ctx.fillStyle = "black";
+        ctx.font = "17px Segoe UI";
+        ctx.fillText(wcity, 50, 50);
+        ctx.font = "15px sans-serif";
+        ctx.fillText(wextra, 50, 70);
+        ctx.fillText(wwind + " km/h   " + wpres + " mm", 50, 90);
+    }
+
+    function loadingCanvas() {
+        let c = document.getElementById("w_canvas");
+        let ctx = c.getContext("2d");
+        let grd = ctx.createLinearGradient(0, 0, 0, 110);
+        grd.addColorStop(0, "rgba(0, 0, 255, 0.5)");
+        grd.addColorStop(1, "rgba(0, 255, 255, 0.5)");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, 500, 100);
+        ctx.textbaseline = "top";
+        // text color
+        ctx.fillStyle = "black";
+        ctx.font = "20px Segoe UI";
+        ctx.fillText('click somewhere in map', 50, 30);
+    }
+    loadingCanvas()
+    var incr = 0;
+    function stop() {
+        but.value = "Run"
+        but.onclick = start
+        incr = 0
+    }
+    function start() {
+        but.value = "Stop"
+        but.onclick = stop
+        incr = 1; zoom()
+    }
+    function zoom() {
+        if (incr == 0) return
+        let MIN = 5, MAX = MAP.getMaxZoom()
+        let z = MAP.getZoom() + incr
+        MAP.setZoom(z)
+        setTimeout(zoom, 700)
+        if (z <= MIN) incr = 1
+        if (z >= MAX) incr = -1
+    }
+    init()
+</script>
+
+</html>
