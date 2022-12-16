@@ -1,9 +1,9 @@
 "use strict";
 var CACHE = 'termproject';
-function installCB(e) {
+// blm305 22 sw file cb functions converted to arrow functions
+addEventListener('install', function (e) {
     console.log(CACHE, e);
-}
-addEventListener('install', installCB);
+});
 function save(req, resp) {
     if (!req.url.includes("github"))
         return resp;
@@ -13,16 +13,13 @@ function save(req, resp) {
         return resp;
     })["catch"](console.error);
 }
-function report(req) {
-    console.log(CACHE + ' matches ' + req.url);
-    return req;
-}
-function fetchCB(e) {
+addEventListener('fetch', function (e) {
     var req = e.request;
-    e.respondWith(fetch(req).then(function (r2) { return save(req, r2); })["catch"](function () { return caches.match(req).then(report); }));
-}
-addEventListener('fetch', fetchCB);
-function activateCB(e) {
+    e.respondWith(fetch(req).then(function (r2) { return save(req, r2); })["catch"](function () { return caches.match(req).then(function (req) {
+        console.log(CACHE + ' matches ' + req.url);
+        return req;
+    }); }));
+});
+addEventListener('activate', function (e) {
     console.log(CACHE, e);
-}
-addEventListener('activate', activateCB);
+});
