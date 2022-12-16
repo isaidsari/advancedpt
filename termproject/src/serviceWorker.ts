@@ -1,6 +1,7 @@
-const CACHE: string = 'termproject'
-
 // blm305 22 sw file cb functions converted to arrow functions
+// to do fix
+
+const CACHE: string = 'termproject'
 
 addEventListener('install', (e: Event) => {
     console.log(CACHE, e);
