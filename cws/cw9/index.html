@@ -43,11 +43,7 @@
     <div>
         <div id=sss></div>
         <p>Use <code>loadImage(x)</code> where x is a URL or <br>
-            number n=1: villa, n=2: field, n=3: flower
-        <p>
-            Ref: <a
-                href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas"
-                target=NewTab>Pixel manipulation</a>
+            or without an argument to default image</p>
     </div>
 
     <script>
@@ -91,8 +87,12 @@
                 this.context = cx
                 this.image = img
             }
-            loadImage(url) {
-                img.src = url
+            loadImage(url = null) {
+                if (url != null) {
+                    img.src = url;
+                } else {
+                    img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/1920px-Tsunami_by_hokusai_19th_century.jpg"
+                }
             }
             invert() {
                 let id = this.context.getImageData(0, 0, this.W, this.H);
@@ -132,13 +132,13 @@
                 let id = this.context.getImageData(0, 0, this.W, this.H);
                 let data = id.data;
                 let temp = new Uint8ClampedArray(data.length);
-                
+
                 for (let x = 0; x < this.W; x++) {
                     for (let y = 0; y < this.H; y++) {
 
                         let i = (y * this.W + x) * 4; // original position
                         let j = (y * this.W + (this.W - x - 1)) * 4; // flipped position
-                        
+
                         temp[j++] = data[i++]; // r
                         temp[j++] = data[i++]; // g
                         temp[j++] = data[i++]; // b
