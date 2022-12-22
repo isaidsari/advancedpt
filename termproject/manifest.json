@@ -1,7 +1,7 @@
 {
-    "name": "termproject",
-    "short_name": "tp",
-    "start_url": "/.index.html",
+    "name": "termproject_beta",
+    "short_name": "tp_beta",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#000000",
     "theme_color": "#000000",
