@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "lib": ["ES6", "DOM"],
-        "rootDir": "./src",
-        "outDir": "./dist",
-    }
-}
