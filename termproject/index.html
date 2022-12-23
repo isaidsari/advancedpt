@@ -1,21 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>termproject_beta</title>
 
-    <link rel="stylesheet" href="./style.css">
-
     <link rel="manifest" href="manifest.json">
     <script>navigator.serviceWorker.register('./src/sw.js')</script>
 
-</head>
-<body>
 
-    <canvas id=gameBoard></canvas>
-    
+
+
+</head>
+<style>
+</style>
+
+<body>
+    <div style="display: flex; justify-content: center; align-items: center;">
+    <canvas height="700" width="380" id="gameBoard"></canvas>
+    </div>
+    <br>
+    <h3>score : *beta*</h3>
+
+    <h2 id="posxy">pos: </h2>
+
 </body>
-    <script src="./src/script.js"></script>
+
+<script>
+</script>
+
+<script src="src/script.js"></script>
+<link rel="stylesheet" href="style.css">
+
+
 </html>
