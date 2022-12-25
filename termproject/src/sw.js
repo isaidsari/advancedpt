@@ -1,6 +1,6 @@
 "use strict";
 var CACHE = 'termproject';
-// blm305 22 sw file cb functions converted to arrow functions
+
 addEventListener('install', function (e) {
     console.log(CACHE, e);
 });
@@ -21,4 +21,16 @@ addEventListener('fetch', function (e) {
 });
 addEventListener('activate', function (e) {
     console.log(CACHE, e);
+});
+addEventListener('refresh', function (e) {
+    console.log(CACHE, e);
+    e.waitUntil(
+        caches.keys().then(function (keys) {
+            return Promise.all(keys
+                .filter(function (key) { return key !== CACHE; })
+                .map(function (key) { return caches["delete"](key); })
+            );
+        }
+        )
+    );
 });
