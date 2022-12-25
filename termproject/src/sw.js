@@ -15,10 +15,9 @@ function save(req, resp) {
 }
 addEventListener('fetch', function (e) {
     var req = e.request;
-    e.respondWith(fetch(req).then(function (r2) { return save(req, r2); })["catch"](function () { return caches.match(req).then(function (req) {
-        console.log(CACHE + ' matches ' + req.url);
-        return req;
-    }); }));
+    e.respondWith(fetch(req).then(function (r2) { return save(req, r2); })["catch"](async function () { const req = await caches.match(req);
+    console.log(CACHE + ' matches ' + req.url);
+    return req; }));
 });
 addEventListener('activate', function (e) {
     console.log(CACHE, e);
