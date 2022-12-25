@@ -13,7 +13,6 @@ export class Ball {
     }
 
     draw() {
-        // draw the ball
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
         ctx.fillStyle = this.color;
@@ -21,9 +20,11 @@ export class Ball {
         ctx.lineWidth = 5;
     }
 
-    move(event) {
+    move(x, y) {
         console.log('moving -> x: ' + x + ' y: ' + y);
-
+        this.x = x;
+        this.y = y;
+        this.draw();
     }
     
 
