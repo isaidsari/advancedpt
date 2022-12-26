@@ -52,3 +52,19 @@ for (var i = 0; i < 10; i++) {
             ball.draw();
         }
     });*/
+
+
+    //sw
+    /*
+addEventListener('refresh', function (e) {
+    console.log(CACHE, e);
+    e.waitUntil(
+        caches.keys().then(function (keys) {
+            return Promise.all(keys
+                .filter(function (key) { return key !== CACHE; })
+                .map(function (key) { return caches["delete"](key); })
+            );
+        }
+        )
+    );
+});*/

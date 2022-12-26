@@ -1,6 +1,3 @@
-// ball class for the game
-
-// global variables
 const canvas = document.getElementById("gameBoard");
 const ctx = canvas.getContext("2d");
 

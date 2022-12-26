@@ -7,9 +7,7 @@ var width;
 var height;
 
 var balls = [];
-
 var chosenBall;
-
 var isDragging = false;
 
 function drawBalls() {
@@ -17,7 +15,8 @@ function drawBalls() {
     var radius = 20;
     var x = radius + padding;
     var y = radius + padding;
-    var color = 'red';
+    var color;
+    var colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'brown', 'black', 'white'];
     var ballWidth = radius * 2;
     var ballHeight = radius * 2;
     var ballCount = 0;
@@ -29,8 +28,16 @@ function drawBalls() {
     ctx.fillRect(0, 0, width, height);
 
     for (var i = 0; i < ballCountTotal; i++) {
+        color = colors[Math.floor(Math.random() * colors.length)];
         var ball = new Ball(x, y, radius, color);
+
         ball.draw();
+        // write index on ball
+        ctx.font = "20px Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText(i, x, y + 5);
+        //
         balls.push(ball);
         x += ballWidth + padding;
         ballCount++;
@@ -69,6 +76,36 @@ function onDrag(x, y) {
     }
 }
 
+function onRelease(x, y) {
+    if (isDragging) {
+        isDragging = false;
+        return;
+    }
+    if (chosenBall) {
+        // delete old ball
+        balls = balls.filter(ball => ball != chosenBall);
+        // draw new ball
+        chosenBall = new Ball(x, y, chosenBall.radius, chosenBall.color);
+        balls.push(chosenBall);
+        drawBalls();
+        chosenBall.draw();
+    }
+    /*
+    isDragging = false;
+
+        // check if ball is chosen and mouse is clicked
+        if (chosenBall) {
+            // delete old ball
+            balls = balls.filter(ball => ball != chosenBall);
+            // draw new ball
+            chosenBall = new Ball(x, y, chosenBall.radius, chosenBall.color);
+            balls.push(chosenBall);
+            drawBalls();
+            chosenBall.draw();
+        }
+    */
+}
+
 function init() {
     width = canvas.scrollWidth;
     height = canvas.scrollHeight;
@@ -92,19 +129,7 @@ function init() {
     canvas.addEventListener('mouseup', function (event) {
         var x = event.pageX - canvas.offsetLeft;
         var y = event.pageY - canvas.offsetTop;
-
-        isDragging = false;
-
-        // check if ball is chosen and mouse is clicked
-        if (chosenBall) {
-            // delete old ball
-            balls = balls.filter(ball => ball != chosenBall);
-            // draw new ball
-            chosenBall = new Ball(x, y, chosenBall.radius, chosenBall.color);
-            balls.push(chosenBall);
-            drawBalls();
-            chosenBall.draw();
-        }
+        onRelease(x, y);
     });
 
     // make draggable for mobile
@@ -151,8 +176,12 @@ function init() {
 
     canvas.addEventListener('touchend', function (event) {
         event.preventDefault();
+        var x = event.changedTouches[0].clientX - canvas.offsetLeft;
+        var y = event.changedTouches[0].clientY - canvas.offsetTop;
+        /*
         var x = event.touches[0].clientX - canvas.offsetLeft;
         var y = event.touches[0].clientY - canvas.offsetTop;
+        */
 
         isDragging = false;
 
@@ -174,14 +203,6 @@ function init() {
 
     // add event listener for mouse tracking
     canvas.addEventListener('mousemove', function (event) {
-        var x = event.pageX - canvas.offsetLeft;
-        var y = event.pageY - canvas.offsetTop;
-        // print position of mouse click
-        document.getElementById("posxy").innerHTML = 'x: ' + x + ' y: ' + y;
-    });
-
-    // add event listener for finger drag
-    canvas.addEventListener('touchend', function (event) {
         var x = event.pageX - canvas.offsetLeft;
         var y = event.pageY - canvas.offsetTop;
         // print position of mouse click
