@@ -8,7 +8,10 @@ var height;
 
 var balls = [];
 var chosenBall;
+var tempBall;
 var isDragging = false;
+
+// this entire code is sucks so bad and some programming gods will torure me for this, im sorry :(
 
 function drawBalls() {
     var padding = 10;
@@ -16,7 +19,7 @@ function drawBalls() {
     var x = radius + padding;
     var y = radius + padding;
     var color;
-    var colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'brown', 'black', 'white'];
+    var colors = ['red', 'yellow', 'orange'];
     var ballWidth = radius * 2;
     var ballHeight = radius * 2;
     var ballCount = 0;
@@ -27,17 +30,20 @@ function drawBalls() {
     ctx.fillStyle = 'lightblue';
     ctx.fillRect(0, 0, width, height);
 
+
+    if (balls.length > 0) {
+        // if balls are already created, draw them
+        balls.forEach(ball => {
+            ball.draw();
+        });
+        return;
+    }
+
     for (var i = 0; i < ballCountTotal; i++) {
         color = colors[Math.floor(Math.random() * colors.length)];
         var ball = new Ball(x, y, radius, color);
 
         ball.draw();
-        // write index on ball
-        ctx.font = "20px Arial";
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText(i, x, y + 5);
-        //
         balls.push(ball);
         x += ballWidth + padding;
         ballCount++;
@@ -55,11 +61,13 @@ function onPress(x, y) {
         return ball.x - ball.radius < x && ball.x + ball.radius > x && ball.y - ball.radius < y && ball.y + ball.radius > y;
     });
     if (ball) {
-        chosenBall = ball;
-        ball.color = 'green';
-        ball.draw();
+        tempBall = ball;
+        chosenBall = ball.copy();
+        chosenBall.color = 'green';
+        chosenBall.draw();
     } else {
         chosenBall = null;
+        tempBall = null;
     }
 }
 
@@ -77,18 +85,27 @@ function onDrag(x, y) {
 }
 
 function onRelease(x, y) {
+    /*
     if (isDragging) {
         isDragging = false;
         return;
     }
+    */
     if (chosenBall) {
+        // swap balls
+        Ball.getBallat(x, y).swap(tempBall);
+        
+        chosenBall = null;
+        tempBall = null;
+        /*
         // delete old ball
         balls = balls.filter(ball => ball != chosenBall);
         // draw new ball
-        chosenBall = new Ball(x, y, chosenBall.radius, chosenBall.color);
+        chosenBall = new Ball(x, y, chosenBall.radius, tempBall.color);
         balls.push(chosenBall);
         drawBalls();
-        chosenBall.draw();
+        //chosenBall.draw();
+        */
     }
     /*
     isDragging = false;
@@ -197,9 +214,6 @@ function init() {
             chosenBall.draw();
         }
     });
-
-
-
 
     // add event listener for mouse tracking
     canvas.addEventListener('mousemove', function (event) {
