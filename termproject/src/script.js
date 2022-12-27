@@ -9,6 +9,7 @@ var height;
 var balls = [];
 var chosenBall;
 var tempBall;
+var orgBall;
 var isDragging = false;
 
 // this entire code is sucks so bad and some programming gods will torure me for this, im sorry :(
@@ -42,6 +43,7 @@ function drawBalls() {
     for (var i = 0; i < ballCountTotal; i++) {
         color = colors[Math.floor(Math.random() * colors.length)];
         var ball = new Ball(x, y, radius, color);
+        Ball.balls.push(ball);
 
         ball.draw();
         balls.push(ball);
@@ -62,9 +64,10 @@ function onPress(x, y) {
     });
     if (ball) {
         tempBall = ball;
+        orgBall = ball.copy();
         chosenBall = ball.copy();
         chosenBall.color = 'green';
-        chosenBall.draw();
+        //chosenBall.draw();
     } else {
         chosenBall = null;
         tempBall = null;
@@ -75,10 +78,13 @@ function onDrag(x, y) {
     isDragging = true;
     if (chosenBall) {
         // delete old ball
-        balls = balls.filter(ball => ball != chosenBall);
+        // balls = balls.filter(ball => ball != chosenBall);
+        tempBall.color = "pink";
         // draw new ball
-        chosenBall = new Ball(x, y, chosenBall.radius, chosenBall.color);
-        balls.push(chosenBall);
+        // chosenBall = new Ball(x, y, chosenBall.radius, chosenBall.color);
+        chosenBall.move(x, y);
+        //balls.push(chosenBall);
+
         drawBalls();
         chosenBall.draw();
     }
@@ -93,10 +99,17 @@ function onRelease(x, y) {
     */
     if (chosenBall) {
         // swap balls
-        Ball.getBallat(x, y).swap(tempBall);
-        
+        let a = Ball.getBallat(x, y);
+        //console.log(a);
+        tempBall.swap(a);
+        tempBall.color = orgBall.color;
+        //Ball.getBallat(x, y).swap(tempBall);
+
         chosenBall = null;
         tempBall = null;
+        orgBall = null;
+
+        drawBalls();
         /*
         // delete old ball
         balls = balls.filter(ball => ball != chosenBall);
