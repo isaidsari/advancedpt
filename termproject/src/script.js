@@ -20,7 +20,7 @@ function drawBalls() {
     var x = radius + padding;
     var y = radius + padding;
     var color;
-    var colors = ['red', 'yellow', 'orange'];
+    var colors = ['#7f8c8d', '#3498db', '#e74c3c']; // #ecf0f1 #95a5a6 #2c3e50 #3498db #2980b9 #2c3e50
     var ballWidth = radius * 2;
     var ballHeight = radius * 2;
     var ballCount = 0;
@@ -56,6 +56,7 @@ function drawBalls() {
             ballCount = 0;
         }
     }
+    Ball.findMatches();
 }
 
 function onPress(x, y) {
@@ -169,7 +170,8 @@ function init() {
 
         var x = event.touches[0].clientX - canvas.offsetLeft;
         var y = event.touches[0].clientY - canvas.offsetTop;
-
+        onPress(x, y);
+        /*
         // find the ball that was clicked in radius
         var ball = balls.find(ball => {
             return ball.x - ball.radius < x && ball.x + ball.radius > x && ball.y - ball.radius < y && ball.y + ball.radius > y;
@@ -181,14 +183,15 @@ function init() {
         } else {
             chosenBall = null;
         }
-
+        */
     });
 
     canvas.addEventListener('touchmove', function (event) {
         event.preventDefault();
         var x = event.touches[0].clientX - canvas.offsetLeft;
         var y = event.touches[0].clientY - canvas.offsetTop;
-
+        onDrag(x, y);
+        /*
         isDragging = true;
 
         // check if ball is chosen and mouse is clicked
@@ -202,6 +205,7 @@ function init() {
             drawBalls();
             chosenBall.draw();
         }
+        */
     });
 
     canvas.addEventListener('touchend', function (event) {
@@ -212,7 +216,8 @@ function init() {
         var x = event.touches[0].clientX - canvas.offsetLeft;
         var y = event.touches[0].clientY - canvas.offsetTop;
         */
-
+        onRelease(x, y);
+        /*
         isDragging = false;
 
         // check if ball is chosen and mouse is clicked
@@ -225,7 +230,9 @@ function init() {
             balls.push(chosenBall);
             drawBalls();
             chosenBall.draw();
+        
         }
+        */
     });
 
     // add event listener for mouse tracking

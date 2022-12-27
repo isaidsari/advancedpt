@@ -1,6 +1,11 @@
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+}
+
 body {
     background-color: #f0f0f0;
-    font-family: sans-serif;
+    font-family: 'Inconsolata', monospace;
 }
 
 .game-container {
