@@ -41,13 +41,19 @@ export class Ball {
         }
         if (!this.canSwap(ball)) {
             console.log('couldnt swap');
+
+            let body = document.getElementsByTagName('body')[0];
+            body.style.backgroundColor = 'red';
+            setTimeout(() => {
+                body.style.backgroundColor = 'white';
+            }, 100);
+
             return;
         }
         var temp = this.copy();
         this.move(ball.x, ball.y);
         ball.move(temp.x, temp.y);
         console.log('swapped ' + Ball.balls.indexOf(this) + ' with ' + Ball.balls.indexOf(ball));
-
     }
 
     copy() {
@@ -55,6 +61,19 @@ export class Ball {
     }
 
     canSwap(ball) {
+        // this shouldnt be here
+        let padding = 10;
+        if (this.x != ball.x && this.y != ball.y) {
+            return false;
+        }
+        if (this == ball) {
+            return false;
+        }
+        let distance = Math.sqrt(Math.pow(this.x - ball.x, 2) + Math.pow(this.y - ball.y, 2));
+        if (distance > this.radius + ball.radius + padding) 
+        {
+            return false;
+        }
         return true;
     }
 
@@ -84,7 +103,6 @@ export class Ball {
         ctx.fillStyle = 'lightblue';
         ctx.fillRect(0, 0, width, height);
 
-
         if (Ball.balls.length > 0) {
             // if balls are already created, draw them
             Ball.balls.forEach(ball => {
@@ -112,26 +130,25 @@ export class Ball {
     }
 
     static findMatches() {
-        let balls = Ball.balls;
         var padding = 10;
         var radius = 20;
         var ballWidth = radius * 2;
         let width = Math.floor(380 / (ballWidth + padding));
-        console.log('width: ' + width);
+        console.log('find match f(): width: ' + width);
 
-        const getBallPosition = (ball) => balls.indexOf(ball);
+        const getBallPosition = (ball) => Ball.balls.indexOf(ball);
 
-        for (const ball of balls) {
+        for (const ball of Ball.balls) {
             const pos = getBallPosition(ball);
 
             // Check left, right, top, and bottom of current ball
-            const left = balls[pos - 1];
-            const right = balls[pos + 1];
-            const top = balls[pos - width];
-            const bottom = balls[pos + width];
+            const left = Ball.balls[pos - 1];
+            const right = Ball.balls[pos + 1];
+            const top = Ball.balls[pos - width];
+            const bottom = Ball.balls[pos + width];
 
             // print ball index with its neighbors
-            console.log('ball: ' + pos + ' left: ' + (left ? getBallPosition(left) : 'null') + ' right: ' + (right ? getBallPosition(right) : 'null') + ' top: ' + (top ? getBallPosition(top) : 'null') + ' bottom: ' + (bottom ? getBallPosition(bottom) : 'null'));
+            //console.log('ball: ' + pos + ' left: ' + (left ? getBallPosition(left) : 'null') + ' right: ' + (right ? getBallPosition(right) : 'null') + ' top: ' + (top ? getBallPosition(top) : 'null') + ' bottom: ' + (bottom ? getBallPosition(bottom) : 'null'));
 
             if (
                 left &&
@@ -163,7 +180,7 @@ export class Ball {
                 bottom &&
                 bottom.color === ball.color
             ) {
-                
+
                 // Mark top, current, and bottom balls as a match
                 top.match = true;
                 ball.match = true;
@@ -175,7 +192,6 @@ export class Ball {
                 ctx.moveTo(top.x, top.y);
                 ctx.lineTo(bottom.x, bottom.y);
                 ctx.stroke();
-
             }
         }
     }

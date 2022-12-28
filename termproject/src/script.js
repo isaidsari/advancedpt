@@ -109,7 +109,6 @@ function onRelease(x, y) {
         chosenBall = null;
         tempBall = null;
         orgBall = null;
-
         drawBalls();
         /*
         // delete old ball
