@@ -14,12 +14,12 @@ export class Game {
         private ballSize: number = 20;
         private ballSpacing: number = this.ballSize + 5;
 
-        private colors: string[] = ['#7f8c8d', '#3498db', '#e74c3c'];
-        // #ecf0f1 #95a5a6 #2c3e50 #3498db #2980b9 #2c3e50
+        private colors: string[] = ['#7f8c8d', '#3498db', '#e74c3c'];   
 
         constructor(
                 private canvas: HTMLCanvasElement,
-                private context: CanvasRenderingContext2D) {
+                private context: CanvasRenderingContext2D,
+                private shadow: boolean = true) {
 
                 this.canvas.style.cursor = 'grab';
 
@@ -57,13 +57,6 @@ export class Game {
                 this.updateBoard();
         }
 
-        private drawBorder(ball: Ball): void {
-                this.context.beginPath();
-                this.context.arc(ball.x, ball.y, this.ballSize + 2, 0, 2 * Math.PI);
-                this.context.strokeStyle = '#ecf0f1';
-                this.context.stroke();
-        }
-
         public getBallAt(x: number, y: number): Ball {
                 const distance = (x: number, y: number, ball: Ball): number => { return Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)) };
 
@@ -89,13 +82,13 @@ export class Game {
                 this.balls.forEach((row) => {
                         row.forEach((ball) => {
                                 if (ball != this.draggingBall)
-                                        ball.draw(this.canvas, this.context);
+                                        ball.draw(this.canvas, this.context, this.shadow);
                         });
                 });
 
                 if (this.draggingBall != null) {
                         this.draggingBall.draw(this.canvas, this.context);
-                        this.drawBorder(this.draggingBall);
+                        this.draggingBall.drawBorder(this.canvas, this.context);
                 }
         }
 
@@ -249,8 +242,8 @@ export class Game {
 
                 let coord: { x: number, y: number } = this.getCoordFromEvent(event);
                 this.draggingBall.move(coord.x, coord.y);
-                this.drawBoard();
 
+                this.drawBoard();
         }
 
         private onReleaseHandle(event: MouseEvent | TouchEvent): void {

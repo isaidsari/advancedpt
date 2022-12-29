@@ -7,14 +7,29 @@ export class Ball {
                 public color: string) {
         }
 
-        public draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D): void {
+        public draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, shadow: boolean = false): void {
                 context.beginPath();
+                if (shadow) {
+                        context.shadowColor = '#333333';
+                        context.shadowBlur = 10;
+                }
                 context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
                 context.fillStyle = this.color;
-                //context.shadowColor = this.color;
-                //context.shadowBlur = 10;
                 context.fill();
+        }
 
+        public drawShadow(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D): void {
+                context.beginPath();
+                context.arc(this.x, this.y, this.radius + 2, 0, Math.PI * 2, false);
+                context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                context.fill();
+        }
+
+        public drawBorder(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D): void {
+                context.beginPath();
+                context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                context.strokeStyle = '#ecf0f1';
+                context.stroke();
         }
 
         public move(x: number, y: number): void {
@@ -40,7 +55,7 @@ export class Ball {
         }
 
         public swap(ball: Ball): void {
-                let temp: {x: number, y: number} = {x: this.x, y: this.y};
+                let temp: { x: number, y: number } = { x: this.x, y: this.y };
                 this.move(ball.x, ball.y);
                 ball.move(temp.x, temp.y);
         }
@@ -48,4 +63,5 @@ export class Ball {
         public clone() {
                 return new Ball(this.x, this.y, this.radius, this.color);
         }
+
 }

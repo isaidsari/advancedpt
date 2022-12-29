@@ -1,9 +1,9 @@
 import { Ball } from './balls.js';
 export class Game {
-    // #ecf0f1 #95a5a6 #2c3e50 #3498db #2980b9 #2c3e50
-    constructor(canvas, context) {
+    constructor(canvas, context, shadow = true) {
         this.canvas = canvas;
         this.context = context;
+        this.shadow = shadow;
         this.balls = [];
         this.draggingBall = null;
         this.originalBall = null;
@@ -37,12 +37,6 @@ export class Game {
         this.canvas.addEventListener('touchend', (event) => { this.onReleaseHandle(event); });
         this.updateBoard();
     }
-    drawBorder(ball) {
-        this.context.beginPath();
-        this.context.arc(ball.x, ball.y, this.ballSize + 2, 0, 2 * Math.PI);
-        this.context.strokeStyle = '#ecf0f1';
-        this.context.stroke();
-    }
     getBallAt(x, y) {
         const distance = (x, y, ball) => { return Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); };
         let foundBall = null;
@@ -65,12 +59,12 @@ export class Game {
         this.balls.forEach((row) => {
             row.forEach((ball) => {
                 if (ball != this.draggingBall)
-                    ball.draw(this.canvas, this.context);
+                    ball.draw(this.canvas, this.context, this.shadow);
             });
         });
         if (this.draggingBall != null) {
             this.draggingBall.draw(this.canvas, this.context);
-            this.drawBorder(this.draggingBall);
+            this.draggingBall.drawBorder(this.canvas, this.context);
         }
     }
     updateBoard() {
