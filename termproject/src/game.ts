@@ -85,8 +85,18 @@ export class Game {
                                         ball.draw(this.canvas, this.context);
                         });
                 });
-                if (this.draggingBall != null)
+
+                const drawBorder = (ball: Ball): void => {
+                        this.context.beginPath();
+                        this.context.arc(ball.x, ball.y, this.ballSize + 2, 0, 2 * Math.PI);
+                        this.context.strokeStyle = '#ecf0f1';
+                        this.context.stroke();
+                }
+
+                if (this.draggingBall != null) {
                         this.draggingBall.draw(this.canvas, this.context);
+                        drawBorder(this.draggingBall);
+                }
         }
 
         public updateBoard(): void {
@@ -226,6 +236,9 @@ export class Game {
                         } else if ((event as MouseEvent).buttons === 1) {
                                 this.canvas.style.cursor = 'grabbing';
                         }
+                }
+                if (event instanceof TouchEvent) {
+                        event.preventDefault();
                 }
 
                 if (this.draggingBall != null) {
