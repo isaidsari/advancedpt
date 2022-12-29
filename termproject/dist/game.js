@@ -68,9 +68,16 @@ export class Game {
         }
     }
     updateBoard() {
-        this.drawBoard();
         let matches = this.findMatches();
-        // clear previous matches lines
+        while (matches.length > 0) {
+            this.breakMatches(matches);
+            this.fillBoard();
+            matches = this.findMatches();
+        }
+        this.drawBoard();
+    }
+    showMatches() {
+        let matches = this.findMatches();
         if (matches.length > 0) {
             matches.forEach((match) => {
                 this.context.beginPath();
@@ -82,49 +89,16 @@ export class Game {
                 this.context.stroke();
             });
         }
-        /*
-        matches.forEach((match) => {
-                match.forEach((ball) => {
-                        this.balls.forEach((row) => {
-                                row.forEach((column) => {
-                                        if (column == ball) {
-                                                // row.splice(row.indexOf(column), 1);
-                                                row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, "transparent");
-                                        }
-                                });
-                        });
-                });
-        });
-
-        this.fillBoard();
-        */
     }
     fillBoard() {
-        // fucked up f()
-        setTimeout(() => {
-            this.balls.forEach((row) => {
-                row.forEach((ball) => {
-                    if (ball.color == 'transparent') {
-                        let index = row.indexOf(ball);
-                        let ballAbove = row[index - 1];
-                        if (ballAbove != null) {
-                            row[index] = ballAbove;
-                            row[index - 1] = new Ball(ballAbove.x, ballAbove.y, this.ballSize, "transparent");
-                        }
-                    }
-                });
+        // fill transparent balls
+        this.balls.forEach((row) => {
+            row.forEach((ball) => {
+                if (ball.color == 'transparent') {
+                    ball.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                }
             });
-        }, 1000);
-        setTimeout(() => {
-            this.balls.forEach((row) => {
-                row.forEach((ball) => {
-                    if (ball.color == 'transparent') {
-                        let index = row.indexOf(ball);
-                        row[index] = new Ball(row[index].x, row[index].y, this.ballSize, this.colors[Math.floor(Math.random() * this.colors.length)]);
-                    }
-                });
-            });
-        }, 1000);
+        });
     }
     findMatches() {
         let matches = [];
@@ -180,6 +154,18 @@ export class Game {
             }
         });
         return matches;
+    }
+    breakMatches(matches) {
+        matches.forEach((match) => {
+            match.forEach((ball) => {
+                this.balls.forEach((row) => {
+                    row.forEach((column) => {
+                        if (column == ball)
+                            row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, 'transparent');
+                    });
+                });
+            });
+        });
     }
     onPressHandle(event) {
         if (event instanceof MouseEvent)

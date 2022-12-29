@@ -14,7 +14,7 @@ export class Game {
         private ballSize: number = 20;
         private ballSpacing: number = this.ballSize + 5;
 
-        private colors: string[] = ['#7f8c8d', '#3498db', '#e74c3c'];   
+        private colors: string[] = ['#7f8c8d', '#3498db', '#e74c3c'];
 
         constructor(
                 private canvas: HTMLCanvasElement,
@@ -93,10 +93,22 @@ export class Game {
         }
 
         public updateBoard(): void {
-                this.drawBoard();
 
                 let matches = this.findMatches();
-                // clear previous matches lines
+
+                while (matches.length > 0) {
+                        this.breakMatches(matches);
+                        this.fillBoard();
+                        matches = this.findMatches();
+                }
+
+                this.drawBoard();
+
+        }
+
+        private showMatches(): void {
+                let matches = this.findMatches();
+
                 if (matches.length > 0) {
                         matches.forEach((match) => {
                                 this.context.beginPath();
@@ -108,52 +120,18 @@ export class Game {
                                 this.context.stroke();
                         });
                 }
-                /*
-                matches.forEach((match) => {
-                        match.forEach((ball) => {
-                                this.balls.forEach((row) => {
-                                        row.forEach((column) => {
-                                                if (column == ball) {
-                                                        // row.splice(row.indexOf(column), 1);
-                                                        row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, "transparent");
-                                                }
-                                        });
-                                });
-                        });
-                });
-
-                this.fillBoard();
-                */
         }
 
         public fillBoard(): void {
-                // fucked up f()
-                setTimeout(() => {
-                        this.balls.forEach((row) => {
-                                row.forEach((ball) => {
-                                        if (ball.color == 'transparent') {
-                                                let index = row.indexOf(ball);
-                                                let ballAbove = row[index - 1];
-                                                if (ballAbove != null) {
-                                                        row[index] = ballAbove;
-                                                        row[index - 1] = new Ball(ballAbove.x, ballAbove.y, this.ballSize, "transparent");
-                                                }
-                                        }
-                                });
-                        });
-                }, 1000);
 
-
-                setTimeout(() => {
-                        this.balls.forEach((row) => {
-                                row.forEach((ball) => {
-                                        if (ball.color == 'transparent') {
-                                                let index = row.indexOf(ball);
-                                                row[index] = new Ball(row[index].x, row[index].y, this.ballSize, this.colors[Math.floor(Math.random() * this.colors.length)]);
-                                        }
-                                });
+                // fill transparent balls
+                this.balls.forEach((row) => {
+                        row.forEach((ball) => {
+                                if (ball.color == 'transparent') {
+                                        ball.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                                }
                         });
-                }, 1000);
+                });
         }
 
         public findMatches(): Ball[][] {
@@ -207,6 +185,19 @@ export class Game {
                 }
                 );
                 return matches;
+        }
+
+        public breakMatches(matches: Ball[][]): void {
+                matches.forEach((match) => {
+                        match.forEach((ball) => {
+                                this.balls.forEach((row) => {
+                                        row.forEach((column) => {
+                                                if (column == ball)
+                                                        row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, 'transparent');
+                                        });
+                                });
+                        });
+                });
         }
 
         private onPressHandle(event: MouseEvent | TouchEvent): void {

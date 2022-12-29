@@ -8,7 +8,7 @@ export class Ball {
     draw(canvas, context, shadow = false) {
         context.beginPath();
         if (shadow) {
-            context.shadowColor = '#333333';
+            context.shadowColor = 'cornsilk';
             context.shadowBlur = 10;
         }
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
