@@ -14,15 +14,16 @@ export class Ball {
                 context.shadowColor = this.color;
                 context.shadowBlur = 10;
                 context.fill();
-        
+
         }
 
         public move(x: number, y: number): void {
                 this.x = x;
                 this.y = y;
+                console.log('move', this.x, this.y);
         }
 
-        private canSwap(ball: Ball): boolean {
+        public canSwap(ball: Ball): boolean {
                 if (ball == null) {
                         return false;
                 }
@@ -35,14 +36,12 @@ export class Ball {
                 let dx = this.x - ball.x;
                 let dy = this.y - ball.y;
                 let distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-                return distance < this.radius + ball.radius;
+                let outer = (this.radius + ball.radius) * 2;
+                return distance < outer;
         }
 
         public swap(ball: Ball): void {
-                if (!this.canSwap(ball)) {
-                        throw new Error("balls cannot swap");
-                }
-                let temp = this.clone();
+                let temp: {x: number, y: number} = {x: this.x, y: this.y};
                 this.move(ball.x, ball.y);
                 ball.move(temp.x, temp.y);
         }

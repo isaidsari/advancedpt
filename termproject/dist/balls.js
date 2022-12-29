@@ -16,6 +16,7 @@ export class Ball {
     move(x, y) {
         this.x = x;
         this.y = y;
+        console.log('move', this.x, this.y);
     }
     canSwap(ball) {
         if (ball == null) {
@@ -30,13 +31,11 @@ export class Ball {
         let dx = this.x - ball.x;
         let dy = this.y - ball.y;
         let distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        return distance < this.radius + ball.radius;
+        let outer = (this.radius + ball.radius) * 2;
+        return distance < outer;
     }
     swap(ball) {
-        if (!this.canSwap(ball)) {
-            throw new Error("balls cannot swap");
-        }
-        let temp = this.clone();
+        let temp = { x: this.x, y: this.y };
         this.move(ball.x, ball.y);
         ball.move(temp.x, temp.y);
     }

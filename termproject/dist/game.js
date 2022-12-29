@@ -42,7 +42,7 @@ export class Game {
         let foundBall = null;
         this.balls.forEach((row) => {
             row.forEach((ball) => {
-                if (distance(x, y, ball) < this.ballSize) {
+                if (distance(x, y, ball) < this.ballSize && ball != this.draggingBall) {
                     foundBall = ball;
                 }
             });
@@ -60,16 +60,69 @@ export class Game {
                 ball.draw(this.canvas, this.context);
             });
         });
+        let matches = this.findMatches();
+        if (matches.length > 0) {
+            matches.forEach((match) => {
+                this.context.beginPath();
+                this.context.moveTo(match[0].x, match[0].y);
+                match.forEach((ball) => {
+                    this.context.lineTo(ball.x, ball.y);
+                });
+                this.context.strokeStyle = '#ecf0f1';
+                this.context.stroke();
+            });
+        }
+        matches.forEach((match) => {
+            match.forEach((ball) => {
+                this.balls.forEach((row) => {
+                    row.forEach((column) => {
+                        if (column == ball) {
+                            // row.splice(row.indexOf(column), 1);
+                            row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, "transparent");
+                        }
+                    });
+                });
+            });
+        });
+        this.fillBoard();
+    }
+    fillBoard() {
+        // start from the top and if the bottom is empty, move the ball down with an animation
+        setTimeout(() => {
+            this.balls.forEach((row) => {
+                row.forEach((ball) => {
+                    if (ball == null) {
+                        let index = row.indexOf(ball);
+                        let ballAbove = row[index - 1];
+                        if (ballAbove != null) {
+                            row[index] = ballAbove;
+                            row[index - 1] = null;
+                        }
+                    }
+                });
+            });
+        }, 1000);
+        setTimeout(() => {
+            this.balls.forEach((row) => {
+                row.forEach((ball) => {
+                    if (ball == null) {
+                        let index = row.indexOf(ball);
+                        row[index] = new Ball(row[index].x, row[index].y, this.ballSize, this.colors[Math.floor(Math.random() * this.colors.length)]);
+                    }
+                });
+            });
+        }, 1000);
+        this.updateBoard();
     }
     findMatches() {
         let matches = [];
         this.balls.forEach((row) => {
             let match = [];
             row.forEach((ball) => {
-                if (match.length === 0) {
+                if (match.length == 0) {
                     match.push(ball);
                 }
-                else if (ball.color === match[0].color) {
+                else if (match[0].color == ball.color) {
                     match.push(ball);
                 }
                 else {
@@ -77,6 +130,37 @@ export class Game {
                         matches.push(match);
                     }
                     match = [ball];
+                }
+            });
+            if (match.length >= 3) {
+                matches.push(match);
+            }
+        });
+        const getColumnIndex = (ball) => {
+            let index = null;
+            this.balls.forEach((row) => {
+                row.forEach((column) => {
+                    if (column == ball) {
+                        index = row.indexOf(column);
+                    }
+                });
+            });
+            return index;
+        };
+        this.balls[0].forEach((column) => {
+            let match = [];
+            this.balls.forEach((row) => {
+                if (match.length == 0) {
+                    match.push(row[getColumnIndex(column)]);
+                }
+                else if (match[0].color == row[getColumnIndex(column)].color) {
+                    match.push(row[getColumnIndex(column)]);
+                }
+                else {
+                    if (match.length >= 3) {
+                        matches.push(match);
+                    }
+                    match = [row[getColumnIndex(column)]];
                 }
             });
             if (match.length >= 3) {
@@ -92,7 +176,6 @@ export class Game {
         let ball = this.getBallAt(coord.x, coord.y);
         if (ball != null) {
             this.originalBall = ball.clone();
-            ball.color = '#ecf0f1';
             this.draggingBall = ball;
         }
         /*
@@ -135,9 +218,9 @@ export class Game {
                 this.canvas.style.cursor = 'grab';
             let coord = this.getCoordFromEvent(event);
             let ball = this.getBallAt(coord.x, coord.y);
-            if (ball != null) {
-                this.draggingBall.move(ball.x, ball.y);
-                ball.move(this.originalBall.x, this.originalBall.y);
+            if (this.originalBall.canSwap(ball)) {
+                this.draggingBall.move(this.originalBall.x, this.originalBall.y);
+                this.draggingBall.swap(ball);
             }
             else {
                 this.draggingBall.move(this.originalBall.x, this.originalBall.y);

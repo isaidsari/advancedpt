@@ -1,5 +1,19 @@
 
+         
+/*
+                setTimeout(() => {
+                        let canvas = document.getElementById('canvas') as HTMLCanvasElement;
+                        let context = canvas.getContext('2d') as CanvasRenderingContext2D;
+                        context.beginPath();
+                        context.arc(this.x, this.y, distance, 0, Math.PI * 2, false);
+                        context.strokeStyle = 'red';
+                        context.stroke();
 
+                        context.beginPath();
+                        context.arc(this.x, this.y, outer, 0, Math.PI * 2, false);
+                        context.strokeStyle = 'green';
+                        context.stroke();
+                }, 1000);*/
 
 /*
     var padding = 10;
