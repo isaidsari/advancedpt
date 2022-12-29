@@ -74,16 +74,23 @@ export class Game {
                 return foundBall;
         }
 
-        public updateBoard(): void {
+        public drawBoard(): void {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.context.fillStyle = '#2c3e50';
                 this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
                 this.balls.forEach((row) => {
                         row.forEach((ball) => {
-                                ball.draw(this.canvas, this.context);
+                                if (ball != this.draggingBall)
+                                        ball.draw(this.canvas, this.context);
                         });
                 });
+                if (this.draggingBall != null)
+                        this.draggingBall.draw(this.canvas, this.context);
+        }
+
+        public updateBoard(): void {
+                this.drawBoard();
                 
                 let matches = this.findMatches();
                 // clear previous matches lines
@@ -117,7 +124,7 @@ export class Game {
         }
 
         public fillBoard(): void {
-                // start from the top and if the bottom is empty, move the ball down with an animation
+                // fucked up f()
                 setTimeout(() => {
                         this.balls.forEach((row) => {
                                 row.forEach((ball) => {
@@ -134,7 +141,7 @@ export class Game {
                 }, 1000);
 
 
-                setTimeout(() => {// if the top row is empty, create a new ball
+                setTimeout(() => {
                         this.balls.forEach((row) => {
                                 row.forEach((ball) => {
                                         if (ball.color == 'transparent') {
@@ -144,8 +151,6 @@ export class Game {
                                 });
                         });
                 }, 1000);
-
-                this.updateBoard();
         }
 
         public findMatches(): Ball[][] {
@@ -212,24 +217,6 @@ export class Game {
                         this.originalBall = ball.clone();
                         this.draggingBall = ball;
                 }
-                /*
-                try {
-                        let ball = this.getBallAt(x, y);
-                        let matches = this.findMatches();
-                        if (matches.length > 0) {
-                                matches.forEach((match) => {
-                                        match.forEach((ball) => {
-                                                ball.color = '#ecf0f1';
-                                        });
-                                });
-                        } else {
-                                ball.color = '#ecf0f1';
-                        }
-                        this.updateBoard();
-                } catch (error) {
-                        console.log(error);
-                }
-                */
         }
 
         private onMoveHandle(event: MouseEvent | TouchEvent): void {
@@ -245,8 +232,7 @@ export class Game {
                         let coord: { x: number, y: number } = this.getCoordFromEvent(event);
 
                         this.draggingBall.move(coord.x, coord.y);
-
-                        this.updateBoard();
+                        this.drawBoard();
                 }
         }
 
@@ -259,19 +245,17 @@ export class Game {
 
                         const swap = (dragBall: Ball, targetBall: Ball): void => {
                                 dragBall.move(this.originalBall.x, this.originalBall.y);
-                                dragBall.swap(targetBall);/*
-                                let dragBallIndex = this.balls[this.originalBall.y][this.originalBall.x];
-                                let targetBallIndex = this.balls[targetBall.y][targetBall.x];
-                                this.balls[this.originalBall.y][this.originalBall.x] = targetBallIndex;
-                                this.balls[targetBall.y][targetBall.x] = dragBallIndex;*/
-                        };
+                                dragBall.swap(targetBall);
+                                let dragBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1))].indexOf(dragBall) };
+                                let targetBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1))].indexOf(targetBall) };
                                 
+                                this.balls[dragBallIdx.x][dragBallIdx.y] = targetBall;
+                                this.balls[targetBallIdx.x][targetBallIdx.y] = dragBall;
+                        };
 
                         let ball = this.getBallAt(coord.x, coord.y);
                         if (this.originalBall.canSwap(ball)) {
-                                swap(this.draggingBall, ball);  
-                                // this.draggingBall.move(this.originalBall.x, this.originalBall.y);
-                                // this.draggingBall.swap(ball);
+                                swap(this.draggingBall, ball);
                         } else {
                                 this.draggingBall.move(this.originalBall.x, this.originalBall.y);
                         }

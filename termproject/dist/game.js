@@ -52,15 +52,21 @@ export class Game {
         }
         return foundBall;
     }
-    updateBoard() {
+    drawBoard() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.fillStyle = '#2c3e50';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.balls.forEach((row) => {
             row.forEach((ball) => {
-                ball.draw(this.canvas, this.context);
+                if (ball != this.draggingBall)
+                    ball.draw(this.canvas, this.context);
             });
         });
+        if (this.draggingBall != null)
+            this.draggingBall.draw(this.canvas, this.context);
+    }
+    updateBoard() {
+        this.drawBoard();
         let matches = this.findMatches();
         // clear previous matches lines
         if (matches.length > 0) {
@@ -92,7 +98,7 @@ export class Game {
         */
     }
     fillBoard() {
-        // start from the top and if the bottom is empty, move the ball down with an animation
+        // fucked up f()
         setTimeout(() => {
             this.balls.forEach((row) => {
                 row.forEach((ball) => {
@@ -117,7 +123,6 @@ export class Game {
                 });
             });
         }, 1000);
-        this.updateBoard();
     }
     findMatches() {
         let matches = [];
@@ -183,24 +188,6 @@ export class Game {
             this.originalBall = ball.clone();
             this.draggingBall = ball;
         }
-        /*
-        try {
-                let ball = this.getBallAt(x, y);
-                let matches = this.findMatches();
-                if (matches.length > 0) {
-                        matches.forEach((match) => {
-                                match.forEach((ball) => {
-                                        ball.color = '#ecf0f1';
-                                });
-                        });
-                } else {
-                        ball.color = '#ecf0f1';
-                }
-                this.updateBoard();
-        } catch (error) {
-                console.log(error);
-        }
-        */
     }
     onMoveHandle(event) {
         if (event instanceof MouseEvent) {
@@ -214,7 +201,7 @@ export class Game {
         if (this.draggingBall != null) {
             let coord = this.getCoordFromEvent(event);
             this.draggingBall.move(coord.x, coord.y);
-            this.updateBoard();
+            this.drawBoard();
         }
     }
     onReleaseHandle(event) {
@@ -224,17 +211,15 @@ export class Game {
             let coord = this.getCoordFromEvent(event);
             const swap = (dragBall, targetBall) => {
                 dragBall.move(this.originalBall.x, this.originalBall.y);
-                dragBall.swap(targetBall); /*
-                let dragBallIndex = this.balls[this.originalBall.y][this.originalBall.x];
-                let targetBallIndex = this.balls[targetBall.y][targetBall.x];
-                this.balls[this.originalBall.y][this.originalBall.x] = targetBallIndex;
-                this.balls[targetBall.y][targetBall.x] = dragBallIndex;*/
+                dragBall.swap(targetBall);
+                let dragBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1))].indexOf(dragBall) };
+                let targetBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1))].indexOf(targetBall) };
+                this.balls[dragBallIdx.x][dragBallIdx.y] = targetBall;
+                this.balls[targetBallIdx.x][targetBallIdx.y] = dragBall;
             };
             let ball = this.getBallAt(coord.x, coord.y);
             if (this.originalBall.canSwap(ball)) {
                 swap(this.draggingBall, ball);
-                // this.draggingBall.move(this.originalBall.x, this.originalBall.y);
-                // this.draggingBall.swap(ball);
             }
             else {
                 this.draggingBall.move(this.originalBall.x, this.originalBall.y);

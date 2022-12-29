@@ -20,7 +20,6 @@ export class Ball {
         public move(x: number, y: number): void {
                 this.x = x;
                 this.y = y;
-                console.log('move', this.x, this.y);
         }
 
         public canSwap(ball: Ball): boolean {

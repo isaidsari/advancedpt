@@ -16,7 +16,6 @@ export class Ball {
     move(x, y) {
         this.x = x;
         this.y = y;
-        console.log('move', this.x, this.y);
     }
     canSwap(ball) {
         if (ball == null) {
