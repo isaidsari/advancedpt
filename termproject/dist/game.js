@@ -10,7 +10,7 @@ export class Game {
         this.padding = 30;
         this.ballSize = 20;
         this.ballSpacing = this.ballSize + 5;
-        this.colors = ['#7f8c8d', '#3498db', '#e74c3c'];
+        this.colors = ['#7f8c8d', '#3498db', '#d91e18']; // '#e74c3c' 
         this.canvas.style.cursor = 'grab';
         this.witdh = this.canvas.width;
         this.height = this.canvas.height;
