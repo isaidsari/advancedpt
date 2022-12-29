@@ -10,7 +10,7 @@ export class Ball {
         public draw(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, shadow: boolean = false): void {
                 context.beginPath();
                 if (shadow) {
-                        context.shadowColor = 'cornsilk';
+                        context.shadowColor = '#1c2d40';
                         context.shadowBlur = 10;
                 }
                 context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
