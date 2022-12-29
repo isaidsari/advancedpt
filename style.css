@@ -35,12 +35,14 @@ td,th{
     padding: 5px;
     font-size: 1.5em;
     width: 50%;
+    background-color: #181717;
 }
 a {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    color: khaki;
+    color: #cebe31;
+    text-decoration: none;
 }
 hr {
     margin-left: auto;

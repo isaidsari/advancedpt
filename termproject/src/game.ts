@@ -118,7 +118,7 @@ export class Game {
                 setTimeout(() => {
                         this.balls.forEach((row) => {
                                 row.forEach((ball) => {
-                                        if (ball == null) {
+                                        if (ball.color == 'transparent') {
                                                 let index = row.indexOf(ball);
                                                 let ballAbove = row[index - 1];
                                                 if (ballAbove != null) {
@@ -134,7 +134,7 @@ export class Game {
                 setTimeout(() => {// if the top row is empty, create a new ball
                         this.balls.forEach((row) => {
                                 row.forEach((ball) => {
-                                        if (ball == null) {
+                                        if (ball.color == 'transparent') {
                                                 let index = row.indexOf(ball);
                                                 row[index] = new Ball(row[index].x, row[index].y, this.ballSize, this.colors[Math.floor(Math.random() * this.colors.length)]);
                                         }
