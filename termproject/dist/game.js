@@ -53,6 +53,7 @@ export class Game {
         return foundBall;
     }
     updateBoard() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.fillStyle = '#2c3e50';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.balls.forEach((row) => {
@@ -61,10 +62,11 @@ export class Game {
             });
         });
         let matches = this.findMatches();
+        // clear previous matches lines
         if (matches.length > 0) {
             matches.forEach((match) => {
                 this.context.beginPath();
-                this.context.moveTo(match[0].x, match[0].y);
+                //this.context.moveTo(match[0].x, match[0].y);
                 match.forEach((ball) => {
                     this.context.lineTo(ball.x, ball.y);
                 });
@@ -72,19 +74,22 @@ export class Game {
                 this.context.stroke();
             });
         }
+        /*
         matches.forEach((match) => {
-            match.forEach((ball) => {
-                this.balls.forEach((row) => {
-                    row.forEach((column) => {
-                        if (column == ball) {
-                            // row.splice(row.indexOf(column), 1);
-                            row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, "transparent");
-                        }
-                    });
+                match.forEach((ball) => {
+                        this.balls.forEach((row) => {
+                                row.forEach((column) => {
+                                        if (column == ball) {
+                                                // row.splice(row.indexOf(column), 1);
+                                                row[row.indexOf(column)] = new Ball(column.x, column.y, this.ballSize, "transparent");
+                                        }
+                                });
+                        });
                 });
-            });
         });
+
         this.fillBoard();
+        */
     }
     fillBoard() {
         // start from the top and if the bottom is empty, move the ball down with an animation
@@ -96,7 +101,7 @@ export class Game {
                         let ballAbove = row[index - 1];
                         if (ballAbove != null) {
                             row[index] = ballAbove;
-                            row[index - 1] = null;
+                            row[index - 1] = new Ball(ballAbove.x, ballAbove.y, this.ballSize, "transparent");
                         }
                     }
                 });
@@ -217,10 +222,19 @@ export class Game {
             if (event instanceof MouseEvent)
                 this.canvas.style.cursor = 'grab';
             let coord = this.getCoordFromEvent(event);
+            const swap = (dragBall, targetBall) => {
+                dragBall.move(this.originalBall.x, this.originalBall.y);
+                dragBall.swap(targetBall); /*
+                let dragBallIndex = this.balls[this.originalBall.y][this.originalBall.x];
+                let targetBallIndex = this.balls[targetBall.y][targetBall.x];
+                this.balls[this.originalBall.y][this.originalBall.x] = targetBallIndex;
+                this.balls[targetBall.y][targetBall.x] = dragBallIndex;*/
+            };
             let ball = this.getBallAt(coord.x, coord.y);
             if (this.originalBall.canSwap(ball)) {
-                this.draggingBall.move(this.originalBall.x, this.originalBall.y);
-                this.draggingBall.swap(ball);
+                swap(this.draggingBall, ball);
+                // this.draggingBall.move(this.originalBall.x, this.originalBall.y);
+                // this.draggingBall.swap(ball);
             }
             else {
                 this.draggingBall.move(this.originalBall.x, this.originalBall.y);

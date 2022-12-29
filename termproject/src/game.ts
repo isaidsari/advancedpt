@@ -75,6 +75,7 @@ export class Game {
         }
 
         public updateBoard(): void {
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.context.fillStyle = '#2c3e50';
                 this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -83,12 +84,13 @@ export class Game {
                                 ball.draw(this.canvas, this.context);
                         });
                 });
-
+                
                 let matches = this.findMatches();
+                // clear previous matches lines
                 if (matches.length > 0) {
                         matches.forEach((match) => {
                                 this.context.beginPath();
-                                this.context.moveTo(match[0].x, match[0].y);
+                                //this.context.moveTo(match[0].x, match[0].y);
                                 match.forEach((ball) => {
                                         this.context.lineTo(ball.x, ball.y);
                                 });
@@ -96,7 +98,7 @@ export class Game {
                                 this.context.stroke();
                         });
                 }
-
+                /*
                 matches.forEach((match) => {
                         match.forEach((ball) => {
                                 this.balls.forEach((row) => {
@@ -111,6 +113,7 @@ export class Game {
                 });
 
                 this.fillBoard();
+                */
         }
 
         public fillBoard(): void {
@@ -123,7 +126,7 @@ export class Game {
                                                 let ballAbove = row[index - 1];
                                                 if (ballAbove != null) {
                                                         row[index] = ballAbove;
-                                                        row[index - 1] = null;
+                                                        row[index - 1] = new Ball(ballAbove.x, ballAbove.y, this.ballSize, "transparent");
                                                 }
                                         }
                                 });
@@ -143,8 +146,6 @@ export class Game {
                 }, 1000);
 
                 this.updateBoard();
-
-
         }
 
         public findMatches(): Ball[][] {
@@ -256,10 +257,21 @@ export class Game {
 
                         let coord: { x: number, y: number } = this.getCoordFromEvent(event);
 
+                        const swap = (dragBall: Ball, targetBall: Ball): void => {
+                                dragBall.move(this.originalBall.x, this.originalBall.y);
+                                dragBall.swap(targetBall);/*
+                                let dragBallIndex = this.balls[this.originalBall.y][this.originalBall.x];
+                                let targetBallIndex = this.balls[targetBall.y][targetBall.x];
+                                this.balls[this.originalBall.y][this.originalBall.x] = targetBallIndex;
+                                this.balls[targetBall.y][targetBall.x] = dragBallIndex;*/
+                        };
+                                
+
                         let ball = this.getBallAt(coord.x, coord.y);
                         if (this.originalBall.canSwap(ball)) {
-                                this.draggingBall.move(this.originalBall.x, this.originalBall.y);
-                                this.draggingBall.swap(ball);
+                                swap(this.draggingBall, ball);  
+                                // this.draggingBall.move(this.originalBall.x, this.originalBall.y);
+                                // this.draggingBall.swap(ball);
                         } else {
                                 this.draggingBall.move(this.originalBall.x, this.originalBall.y);
                         }
