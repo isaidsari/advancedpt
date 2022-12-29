@@ -220,6 +220,9 @@ export class Game {
                 if (event instanceof MouseEvent)
                         this.canvas.style.cursor = 'grabbing';
 
+                if (event instanceof TouchEvent)
+                        event.preventDefault();
+
                 let coord: { x: number, y: number } = this.getCoordFromEvent(event);
 
                 let ball = this.getBallAt(coord.x, coord.y);

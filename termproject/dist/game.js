@@ -190,6 +190,8 @@ export class Game {
     onPressHandle(event) {
         if (event instanceof MouseEvent)
             this.canvas.style.cursor = 'grabbing';
+        if (event instanceof TouchEvent)
+            event.preventDefault();
         let coord = this.getCoordFromEvent(event);
         let ball = this.getBallAt(coord.x, coord.y);
         if (ball != null) {
