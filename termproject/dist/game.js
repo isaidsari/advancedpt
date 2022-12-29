@@ -37,6 +37,12 @@ export class Game {
         this.canvas.addEventListener('touchend', (event) => { this.onReleaseHandle(event); });
         this.updateBoard();
     }
+    drawBorder(ball) {
+        this.context.beginPath();
+        this.context.arc(ball.x, ball.y, this.ballSize + 2, 0, 2 * Math.PI);
+        this.context.strokeStyle = '#ecf0f1';
+        this.context.stroke();
+    }
     getBallAt(x, y) {
         const distance = (x, y, ball) => { return Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); };
         let foundBall = null;
@@ -58,19 +64,13 @@ export class Game {
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.balls.forEach((row) => {
             row.forEach((ball) => {
-                if (ball != this.draggingBall)
-                    ball.draw(this.canvas, this.context);
+                //if (ball != this.draggingBall)
+                ball.draw(this.canvas, this.context);
             });
         });
-        const drawBorder = (ball) => {
-            this.context.beginPath();
-            this.context.arc(ball.x, ball.y, this.ballSize + 2, 0, 2 * Math.PI);
-            this.context.strokeStyle = '#ecf0f1';
-            this.context.stroke();
-        };
         if (this.draggingBall != null) {
             this.draggingBall.draw(this.canvas, this.context);
-            drawBorder(this.draggingBall);
+            this.drawBorder(this.draggingBall);
         }
     }
     updateBoard() {
