@@ -13,7 +13,6 @@ var orgBall;
 var isDragging = false;
 
 // this entire code is sucks so bad and some programming gods will torure me for this, im sorry :(
-
 function drawBalls() {
     var padding = 10;
     var radius = 20;
@@ -32,9 +31,9 @@ function drawBalls() {
     ctx.fillRect(0, 0, width, height);
 
 
-    if (balls.length > 0) {
+    if (Ball.balls.length > 0) {
         // if balls are already created, draw them
-        balls.forEach(ball => {
+        Ball.balls.forEach(ball => {
             ball.draw();
         });
         return;
@@ -55,14 +54,15 @@ function drawBalls() {
             y += ballHeight + padding;
             ballCount = 0;
         }
+        console.log("fdgdfgdgsf")
+        console.log(balls);
+        console.log(Ball.balls)
     }
     Ball.findMatches();
 }
 
 function onPress(x, y) {
-    var ball = balls.find(ball => {
-        return ball.x - ball.radius < x && ball.x + ball.radius > x && ball.y - ball.radius < y && ball.y + ball.radius > y;
-    });
+    let ball = Ball.getBallat(x, y);
     if (ball) {
         tempBall = ball;
         orgBall = ball.copy();
@@ -86,7 +86,7 @@ function onDrag(x, y) {
         chosenBall.move(x, y);
         //balls.push(chosenBall);
 
-        drawBalls();
+        Ball.drawBalls();
         chosenBall.draw();
     }
 }
@@ -109,7 +109,7 @@ function onRelease(x, y) {
         chosenBall = null;
         tempBall = null;
         orgBall = null;
-        drawBalls();
+        Ball.drawBalls();
         /*
         // delete old ball
         balls = balls.filter(ball => ball != chosenBall);
@@ -246,5 +246,5 @@ function init() {
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
-    drawBalls();
+    /*Ball.*/drawBalls(width, height);
 });

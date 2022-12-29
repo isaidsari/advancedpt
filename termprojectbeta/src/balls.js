@@ -3,6 +3,14 @@ const ctx = canvas.getContext("2d");
 
 export class Ball {
 
+    static padding = 10;
+    static radius = 20;
+
+    static width = canvas.width;
+    static height = canvas.height;
+
+    static colors = ['#7f8c8d', '#3498db', '#e74c3c']; // #ecf0f1 #95a5a6 #2c3e50 #3498db #2980b9 #2c3e50
+
     // static balls matrix
     static balls = [];
 
@@ -41,13 +49,13 @@ export class Ball {
         }
         if (!this.canSwap(ball)) {
             console.log('couldnt swap');
-
+            
             let body = document.getElementsByTagName('body')[0];
             body.style.backgroundColor = 'red';
             setTimeout(() => {
                 body.style.backgroundColor = 'white';
             }, 100);
-
+            
             return;
         }
         var temp = this.copy();
@@ -87,12 +95,12 @@ export class Ball {
     }
 
     static drawBalls() {
-        var padding = 10;
-        var radius = 20;
+        var width = this.width;
+        var height = this.height;
+        var padding = Ball.padding;
+        var radius = Ball.radius;
         var x = radius + padding;
         var y = radius + padding;
-        var color;
-        var colors = ['red', 'yellow', 'orange'];
         var ballWidth = radius * 2;
         var ballHeight = radius * 2;
         var ballCount = 0;
@@ -111,8 +119,9 @@ export class Ball {
             return;
         }
 
+        let color;
         for (var i = 0; i < ballCountTotal; i++) {
-            color = colors[Math.floor(Math.random() * colors.length)];
+            color = this.colors[Math.floor(Math.random() * this.colors.length)];
             var ball = new Ball(x, y, radius, color);
             Ball.balls.push(ball);
 
@@ -127,16 +136,17 @@ export class Ball {
                 ballCount = 0;
             }
         }
+        this.findMatches();
     }
 
     static findMatches() {
-        var padding = 10;
-        var radius = 20;
+        var padding = Ball.padding;
+        var radius = Ball.radius;
         var ballWidth = radius * 2;
         let width = Math.floor(380 / (ballWidth + padding));
         console.log('find match f(): width: ' + width);
 
-        const getBallPosition = (ball) => Ball.balls.indexOf(ball);
+        let getBallPosition = (ball) => Ball.balls.indexOf(ball);
 
         for (const ball of Ball.balls) {
             const pos = getBallPosition(ball);
