@@ -88,7 +88,7 @@ export class Game {
 
                 this.balls.forEach((row) => {
                         row.forEach((ball) => {
-                                //if (ball != this.draggingBall)
+                                if (ball != this.draggingBall)
                                         ball.draw(this.canvas, this.context);
                         });
                 });
@@ -101,7 +101,7 @@ export class Game {
 
         public updateBoard(): void {
                 this.drawBoard();
-                
+
                 let matches = this.findMatches();
                 // clear previous matches lines
                 if (matches.length > 0) {
@@ -233,6 +233,9 @@ export class Game {
         }
 
         private onMoveHandle(event: MouseEvent | TouchEvent): void {
+                if (this.draggingBall == null)
+                        return;
+
                 if (event instanceof MouseEvent) {
                         if ((event as MouseEvent).buttons === 0) {
                                 return;
@@ -244,44 +247,42 @@ export class Game {
                         event.preventDefault();
                 }
 
-                if (this.draggingBall != null) {
-                        let coord: { x: number, y: number } = this.getCoordFromEvent(event);
+                let coord: { x: number, y: number } = this.getCoordFromEvent(event);
+                this.draggingBall.move(coord.x, coord.y);
+                this.drawBoard();
 
-                        this.draggingBall.move(coord.x, coord.y);
-                        this.drawBoard();
-                }
         }
 
         private onReleaseHandle(event: MouseEvent | TouchEvent): void {
-                if (this.draggingBall != null) {
-                        if (event instanceof MouseEvent)
-                                this.canvas.style.cursor = 'grab';
+                if (this.draggingBall == null)
+                        return;
 
-                        let coord: { x: number, y: number } = this.getCoordFromEvent(event);
+                if (event instanceof MouseEvent)
+                        this.canvas.style.cursor = 'grab';
 
-                        const swap = (dragBall: Ball, targetBall: Ball): void => {
-                                dragBall.move(this.originalBall.x, this.originalBall.y);
-                                dragBall.swap(targetBall);
-                                let dragBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1))].indexOf(dragBall) };
-                                let targetBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1))].indexOf(targetBall) };
-                                
-                                this.balls[dragBallIdx.x][dragBallIdx.y] = targetBall;
-                                this.balls[targetBallIdx.x][targetBallIdx.y] = dragBall;
-                        };
+                let coord: { x: number, y: number } = this.getCoordFromEvent(event);
 
-                        let ball = this.getBallAt(coord.x, coord.y);
-                        if (this.originalBall.canSwap(ball)) {
-                                swap(this.draggingBall, ball);
-                        } else {
-                                this.draggingBall.move(this.originalBall.x, this.originalBall.y);
-                        }
+                const swap = (dragBall: Ball, targetBall: Ball): void => {
+                        dragBall.move(this.originalBall.x, this.originalBall.y);
+                        dragBall.swap(targetBall);
+                        let dragBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(dragBall) != -1))].indexOf(dragBall) };
+                        let targetBallIdx = { x: this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1)), y: this.balls[this.balls.indexOf(this.balls.find((row) => row.indexOf(targetBall) != -1))].indexOf(targetBall) };
 
-                        this.draggingBall = null;
-                        this.originalBall = null;
+                        this.balls[dragBallIdx.x][dragBallIdx.y] = targetBall;
+                        this.balls[targetBallIdx.x][targetBallIdx.y] = dragBall;
+                };
 
-                        this.updateBoard();
+                let ball = this.getBallAt(coord.x, coord.y);
+                if (this.originalBall.canSwap(ball)) {
+                        swap(this.draggingBall, ball);
+                } else {
+                        this.draggingBall.move(this.originalBall.x, this.originalBall.y);
                 }
 
+                this.draggingBall = null;
+                this.originalBall = null;
+
+                this.updateBoard();
         }
 
         private getCoordFromEvent(event: MouseEvent | TouchEvent): { x: number, y: number } {

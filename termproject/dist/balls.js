@@ -9,8 +9,8 @@ export class Ball {
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         context.fillStyle = this.color;
-        context.shadowColor = this.color;
-        context.shadowBlur = 10;
+        //context.shadowColor = this.color;
+        //context.shadowBlur = 10;
         context.fill();
     }
     move(x, y) {
